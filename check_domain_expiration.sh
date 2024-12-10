@@ -21,6 +21,7 @@ ALARM=10
 # binaries path
 WHOIS="/usr/bin/whois"
 AWK="/usr/bin/awk"
+CURL="/usr/bin/curl"
 
 # Main check function
 check_domain()
@@ -470,6 +471,16 @@ check_domain()
 	elif [ "$DTYPE" = "is" ]
 	then
 		EXDATE_TMP=$(${WHOIS} -h whois.isnic.is "${1}" | ${AWK} 'BEGIN { FS=":"} ; /expires:/ { print $2 }' | cut -c 7-)
+		if [ -z "$EXDATE_TMP" ]
+		then
+			EXP_DAYS=NULL
+		else
+			EXDATE=`date -d"$EXDATE_TMP" +%Y-%m-%d`
+			EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
+		fi
+	elif [ "$DTYPE" = "hu" ]
+	then
+		EXDATE_TMP=$(${CURL} -s -X POST https://info.domain.hu/webwhois/hu/domain/$1 | awk 'f{print;f=0} /Lej.*rati id/{f=1}'
 		if [ -z "$EXDATE_TMP" ]
 		then
 			EXP_DAYS=NULL
