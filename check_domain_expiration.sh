@@ -480,7 +480,7 @@ check_domain()
 		fi
 	elif [ "$DTYPE" = "hu" ]
 	then
-		EXDATE_TMP=$(${CURL} -s -X POST https://info.domain.hu/webwhois/hu/domain/$1 | awk 'f{print;f=0} /Lej.*rati id/{f=1}'
+		EXDATE_TMP=$(${CURL} -s -X POST https://info.domain.hu/webwhois/hu/domain/$1 | awk 'f{print;f=0} /Lej.*rati id/{f=1}')
 		if [ -z "$EXDATE_TMP" ]
 		then
 			EXP_DAYS=NULL
